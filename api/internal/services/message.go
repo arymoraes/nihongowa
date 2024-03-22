@@ -77,4 +77,17 @@ func PostMessageToConversation(conversationID string, message models.Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	// Now, send it to OpenAI
+	ai_reply := SendMessageToChatGPT(message.Content)
+
+	reply_map := map[string]interface{}{
+		"content":               ai_reply.Content,
+		"translation":           ai_reply.Translation,
+		"wordbywordtranslation": ai_reply.WordByWordTranslation,
+	}
+
+	// Create a new entry in Cassandra
+	config.Session.Query(query, []map[string]interface{}{reply_map}, conversationID).Exec()
+
 }
