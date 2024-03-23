@@ -13,7 +13,11 @@ import (
 func GetMessagesFromConversation(c echo.Context) error {
 	id := c.Param("conversation_id")
 
-	messages := services.GetMessagesFromConversation(id)
+	messages, err := services.GetMessagesFromConversation(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+	}
 
 	return c.JSON(http.StatusOK, messages)
 }
