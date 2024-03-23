@@ -32,3 +32,14 @@ func PostMessageToConversation(c echo.Context) error {
 
 	return c.String(http.StatusOK, id)
 }
+
+// e.POST("/conversations", postConversation)
+func PostConversation(c echo.Context) error {
+	type PostConversationResponse struct {
+		ConversationID string `json:"conversation_id"`
+	}
+
+	conversation_id := services.CreateConversation()
+
+	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation_id.String()})
+}
