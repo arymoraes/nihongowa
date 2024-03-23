@@ -25,6 +25,11 @@ import io.ktor.client.statement.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
+import model.Message
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
@@ -50,6 +55,11 @@ fun App() {
     }
 }
 
+
+
+@Serializable 
+data class Project(val name: String, val language: String)
+
 suspend fun doSomething() {
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -62,6 +72,17 @@ suspend fun doSomething() {
         val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/f9ae03e9-03d6-4b59-8834-ad009e1a637b")
 
         println(response.bodyAsText())
+
+        // val data = Project("kotlinx.serialization", "Kotlin")
+        // val string = Json.encodeToString(data)  
+        // println(string) // {"name":"kotlinx.serialization","language":"Kotlin"} 
+
+        val obj = Json.decodeFromString<List<Message>>(response.bodyAsText())
+
+        println(obj)
+
+        // Print obj.content
+        println(obj[0].content)
 
         // Assuming HttpResponse.Success and HttpResponse.Error are part of your own error handling, you'd typically check the status here
         println("Response received: ${response.status}")

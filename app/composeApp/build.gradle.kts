@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
 }
 
 kotlin {
@@ -27,7 +28,6 @@ kotlin {
     }
     
     sourceSets {
-        
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -43,8 +43,9 @@ kotlin {
             implementation("media.kamel:kamel-image:0.9.3")
             implementation("io.ktor:ktor-client-core:2.3.9")
             implementation("io.ktor:ktor-client-cio:2.3.9")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
         }
     }
 }

@@ -1,12 +1,13 @@
 package model
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
-@Serializable
+@Serializable 
 data class Message(
     val content: String,
     val translation: String,
-    val wordByWordTranslation: List<String>,
+    val wordByWordTranslation: List<String>?,
     val createdAt: String,
     val updatedAt: String,
 )
