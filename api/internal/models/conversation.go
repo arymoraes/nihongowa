@@ -50,9 +50,21 @@ func (c *Conversation) AddMessage(message Message) error {
 }
 
 func (c *Conversation) GetMessages() error {
+	var count int64
+	err := config.Session.Query("SELECT COUNT(*) FROM conversations WHERE id = ?", c.ID).Consistency(gocql.One).Scan(&count)
+
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		c.Messages = nil
+		return nil
+	}
+
 	iter := config.Session.Query("SELECT messages FROM conversations WHERE id = ?", c.ID).Consistency(gocql.One).Iter()
 
-	var messages []Message
+	messages := []Message{}
 
 	m := map[string]interface{}{}
 	for iter.MapScan(m) {
@@ -80,7 +92,6 @@ func (c *Conversation) GetMessages() error {
 	}
 
 	c.Messages = messages
-	fmt.Println(c.Messages)
 
 	return nil
 }

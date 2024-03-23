@@ -55,7 +55,7 @@ import (
 // 	return resp.Choices[0].Message.Content
 // }
 
-func SendMessageToChatGPT(message string) models.Message {
+func SendMessageToChatGPT(message string) (models.Message, error) {
 	var instructions = "You will hold a conversation in Japanese. You will receive a message from the user, and you will answer in Japanese, like a normal conversation. You will only use hiragana and katakana, kanjis are forbidden. If you don't know how to avoid kanjis, translate it to romanji and then transform it into hiragana/katakana.\n" +
 		"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response. This is the JSON format:\n" +
 		"{\n" +
@@ -83,7 +83,7 @@ func SendMessageToChatGPT(message string) models.Message {
 
 	if err != nil {
 		fmt.Println("error:", err)
-		return models.Message{}
+		return models.Message{}, err
 	}
 
 	var response_model models.Message
@@ -94,7 +94,8 @@ func SendMessageToChatGPT(message string) models.Message {
 
 	if unmarshal_err != nil {
 		fmt.Println("error:", unmarshal_err)
+		return models.Message{}, unmarshal_err
 	}
 
-	return response_model
+	return response_model, nil
 }

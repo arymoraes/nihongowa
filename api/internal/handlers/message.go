@@ -15,6 +15,11 @@ func GetMessagesFromConversation(c echo.Context) error {
 
 	messages, err := services.GetMessagesFromConversation(id)
 
+	// If it is an empty array its ok
+	if messages == nil {
+		return c.JSON(http.StatusNotFound, ErrorResponse{Message: "Conversation not found"})
+	}
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 	}
@@ -32,9 +37,13 @@ func PostMessageToConversation(c echo.Context) error {
 		Content: content,
 	}
 
-	services.PostMessageToConversation(id, message)
+	reply, err := services.PostMessageToConversation(id, message)
 
-	return c.String(http.StatusOK, id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, reply)
 }
 
 // e.POST("/conversations", postConversation)
@@ -43,7 +52,11 @@ func PostConversation(c echo.Context) error {
 		ConversationID string `json:"conversation_id"`
 	}
 
-	conversation_id := services.CreateConversation()
+	conversation_id, err := services.CreateConversation()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+	}
 
 	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation_id.String()})
 }
