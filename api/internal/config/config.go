@@ -26,7 +26,10 @@ func createSchema(session *gocql.Session) {
 	// Create the table 'conversations'
 	createTableCql := `CREATE TABLE IF NOT EXISTS nihongowa.conversations (
         id UUID PRIMARY KEY,
-        messages LIST<FROZEN<message>>
+        messages LIST<FROZEN<message>>,
+				ThreadID VARCHAR,
+				AssistantID VARCHAR,
+				Scenario TEXT
     );`
 
 	// Execute the CQL to create the table

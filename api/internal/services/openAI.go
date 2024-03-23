@@ -11,6 +11,16 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
+var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation." +
+	"You will only use hiragana and katakana, kanjis are forbidden.\n" +
+	"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response." +
+	"The JSON will contain: `content` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English.\n" +
+	"This is the JSON format:\n" +
+	"{\n" +
+	"    \"content\": \"こんにちは\",\n" +
+	"    \"translation\": \"Hello\"\n" +
+	"}\n"
+
 func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
 	if conversation.AssistantID == "" {
 		assistantId, err := createAssistant()
@@ -33,6 +43,9 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 
 		conversation.ThreadID = run.ThreadID
 
+		// We save the new ThreadID and AssistantID in the conversation
+		models.UpdateConversation(conversation)
+
 		for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
 			response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
 
@@ -46,8 +59,9 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 	} else {
 		// If the thread exists, we spawn a run
 		run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
-			AssistantID: conversation.AssistantID,
-			Model:       openai.GPT3Dot5Turbo,
+			AssistantID:  conversation.AssistantID,
+			Model:        openai.GPT3Dot5Turbo,
+			Instructions: instructions,
 		})
 
 		if err != nil {
@@ -55,8 +69,21 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 			return models.Message{}, err
 		}
 
+		// Send a message
+		_, err = config.OpenAIClient.CreateMessage(context.Background(), conversation.ThreadID, openai.MessageRequest{
+			Role:    openai.ChatMessageRoleUser,
+			Content: message,
+		})
+
+		if err != nil {
+			fmt.Println("Error creating message", err)
+			return models.Message{}, err
+		}
+
 		for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
 			response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
+
+			fmt.Println("run", run)
 
 			if err != nil {
 				fmt.Println("Error retrieving run", err)
@@ -73,13 +100,6 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 func createAssistant() (string, error) {
 	var name = "Nihongowa Assistant"
 	var description = "A Japanese language learning assistant"
-	var instructions = "You will hold a conversation in Japanese. You will receive a message from the user, and you will answer in Japanese, like a normal conversation. You will only use hiragana and katakana, kanjis are forbidden. If you don't know how to avoid kanjis, translate it to romanji and then transform it into hiragana/katakana.\n" +
-		"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response. This is the JSON format:\n" +
-		"{\n" +
-		"    \"content\": \"こんにちは\",\n" +
-		"    \"translation\": \"Hello\"\n" +
-		"}\n" +
-		"Again, kanjis are forbidden!!! Do not use kanjis inside `content`"
 
 	assistant, err := config.OpenAIClient.CreateAssistant(
 		context.Background(),
@@ -138,6 +158,8 @@ func retrieveAndProcessMessages(threadID string) (models.Message, error) {
 		fmt.Println("Error listing messages", err)
 		return models.Message{}, err
 	}
+
+	fmt.Println("messages", messages)
 
 	if len(messages.Messages) == 0 {
 		return models.Message{}, fmt.Errorf("no messages found in thread")

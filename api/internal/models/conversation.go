@@ -30,6 +30,16 @@ func GetConversationById(conversationID gocql.UUID) (*Conversation, error) {
 	return conversation, nil
 }
 
+func UpdateConversation(conversation *Conversation) error {
+	query := "UPDATE conversations SET threadid = ?, assistantid = ?, scenario = ? WHERE id = ?"
+
+	if err := config.Session.Query(query, conversation.ThreadID, conversation.AssistantID, conversation.Scenario, conversation.ID).Exec(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func NewConversation(conversationID gocql.UUID) (*Conversation, error) {
 	conversation := &Conversation{ID: conversationID, Messages: []Message{}}
 
