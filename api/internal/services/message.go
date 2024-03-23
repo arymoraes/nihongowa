@@ -36,7 +36,7 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 	conversation, err := models.GetConversationById(id)
 
 	if err != nil {
-		log.Printf("Error getting conversation by ID: %v", err)
+		log.Printf("Error getting conversation by ID: %v. ID: %v", err, id)
 		return models.Message{}, err
 	}
 

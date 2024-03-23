@@ -105,14 +105,49 @@ func (c *Conversation) GetMessages() error {
 
 		for _, rawMessage := range rawMessages {
 			var message Message
-			message.Content = rawMessage["content"].(string)
-			message.Translation = rawMessage["translation"].(string)
-			message.Romanji = rawMessage["romanji"].(string)
-			message.WordByWordTranslation = rawMessage["wordbywordtranslation"].([]string)
-			message.UserMessageTranslated = rawMessage["usermessagetranslated"].(string)
-			message.IsAI = rawMessage["isai"].(bool)
-			message.CreatedAt = rawMessage["createdat"].(time.Time)
-			message.UpdatedAt = rawMessage["updatedat"].(time.Time)
+
+			// For strings that might be null
+			if content, ok := rawMessage["content"].(string); ok {
+				message.Content = content
+			}
+			if translation, ok := rawMessage["translation"].(string); ok {
+				message.Translation = translation
+			}
+			if romanji, ok := rawMessage["romanji"].(string); ok {
+				message.Romanji = romanji
+			}
+			if userMessageTranslated, ok := rawMessage["usermessagetranslated"].(string); ok {
+				message.UserMessageTranslated = userMessageTranslated
+			}
+
+			// For slices of strings
+			if wbt, ok := rawMessage["wordbywordtranslation"].([]interface{}); ok {
+				for _, v := range wbt {
+					if str, ok := v.(string); ok {
+						message.WordByWordTranslation = append(message.WordByWordTranslation, str)
+					}
+				}
+			}
+
+			// For boolean fields
+			if isAI, ok := rawMessage["isai"].(bool); ok {
+				message.IsAI = isAI
+			}
+
+			// For time.Time fields assuming they are provided as string and might be null
+			// If they're in a different format or you use *time.Time, this will need adjustment
+			if createdAtStr, ok := rawMessage["createdat"].(string); ok && createdAtStr != "" {
+				createdAt, err := time.Parse(time.RFC3339, createdAtStr) // Adjust the format as necessary
+				if err == nil {
+					message.CreatedAt = createdAt
+				}
+			}
+			if updatedAtStr, ok := rawMessage["updatedat"].(string); ok && updatedAtStr != "" {
+				updatedAt, err := time.Parse(time.RFC3339, updatedAtStr) // Adjust the format as necessary
+				if err == nil {
+					message.UpdatedAt = updatedAt
+				}
+			}
 
 			messages = append(messages, message)
 		}

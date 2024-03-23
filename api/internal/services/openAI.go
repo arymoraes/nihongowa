@@ -24,7 +24,8 @@ var instructions = "You will hold a conversation in Japanese. You will receive a
 	"    \"translation\": \"Hello\"\n" +
 	"    \"romanji\": \"konnichiwa\"\n" +
 	"    \"user_message_translated\": \"Hello\"\n" +
-	"}\n"
+	"}\n" +
+	"If the user sends a message in English or in romanji, you will respond in Japanese like normal"
 
 func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
 	if conversation.AssistantID == "" {

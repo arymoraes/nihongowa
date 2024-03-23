@@ -63,7 +63,7 @@ suspend fun fetchData(): List<Message> {
     }
 
     try {
-        val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/582633d3-e87c-4ef1-9ff6-75f6c3c80751")
+        val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/cf45fcce-a794-47b6-aae4-cf26c0bce61a")
 
         return Json.decodeFromString<List<Message>>(response.bodyAsText())
 
@@ -82,7 +82,7 @@ suspend fun sendMessage(message: String): Boolean {
 
     return try {
         val response: HttpResponse = client.submitForm(
-            url = "http://192.168.1.71:1323/messages/582633d3-e87c-4ef1-9ff6-75f6c3c80751",
+            url = "http://192.168.1.71:1323/messages/cf45fcce-a794-47b6-aae4-cf26c0bce61a",
             formParameters = Parameters.build {
                 append("message", message)
             }
