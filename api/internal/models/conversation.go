@@ -61,6 +61,9 @@ func (c *Conversation) AddMessage(message Message) error {
 	messageMap := map[string]interface{}{
 		"content":               message.Content,
 		"translation":           message.Translation,
+		"romanji":               message.Romanji,
+		"isai":                  message.IsAI,
+		"usermessagetranslated": message.UserMessageTranslated,
 		"wordbywordtranslation": []string{},
 		"createdat":             message.CreatedAt,
 		"updatedat":             message.UpdatedAt,
@@ -104,7 +107,10 @@ func (c *Conversation) GetMessages() error {
 			var message Message
 			message.Content = rawMessage["content"].(string)
 			message.Translation = rawMessage["translation"].(string)
+			message.Romanji = rawMessage["romanji"].(string)
 			message.WordByWordTranslation = rawMessage["wordbywordtranslation"].([]string)
+			message.UserMessageTranslated = rawMessage["usermessagetranslated"].(string)
+			message.IsAI = rawMessage["isai"].(bool)
 			message.CreatedAt = rawMessage["createdat"].(time.Time)
 			message.UpdatedAt = rawMessage["updatedat"].(time.Time)
 

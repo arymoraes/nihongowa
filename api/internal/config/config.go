@@ -13,6 +13,9 @@ func createSchema(session *gocql.Session) {
 	createTypeCql := `CREATE TYPE IF NOT EXISTS nihongowa.message (
         content TEXT,
         translation TEXT,
+				romanji TEXT,
+				userMessageTranslated TEXT,
+				isAI BOOLEAN,
         wordByWordTranslation LIST<TEXT>,
         createdAt TIMESTAMP,
         updatedAt TIMESTAMP

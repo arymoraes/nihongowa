@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"math/rand"
 	"nihongowa/internal/config"
 	"nihongowa/internal/models"
+	"os"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -14,16 +17,18 @@ import (
 var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation." +
 	"You will only use hiragana and katakana, kanjis are forbidden.\n" +
 	"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response." +
-	"The JSON will contain: `content` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English.\n" +
+	"The JSON will contain: `content` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese." +
 	"This is the JSON format:\n" +
 	"{\n" +
 	"    \"content\": \"こんにちは\",\n" +
 	"    \"translation\": \"Hello\"\n" +
+	"    \"romanji\": \"konnichiwa\"\n" +
+	"    \"user_message_translated\": \"Hello\"\n" +
 	"}\n"
 
 func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
 	if conversation.AssistantID == "" {
-		assistantId, err := createAssistant()
+		assistantId, err := createAssistant(conversation)
 
 		if err != nil {
 			fmt.Println("Error creating assistant", err)
@@ -97,9 +102,32 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 	return retrieveAndProcessMessages(conversation.ThreadID)
 }
 
-func createAssistant() (string, error) {
+type Scenario struct {
+	Scenario string `json:"scenario"`
+}
+
+func createAssistant(c *models.Conversation) (string, error) {
 	var name = "Nihongowa Assistant"
 	var description = "A Japanese language learning assistant"
+
+	var scenarios []Scenario
+
+	scenariosFile, err := os.Open("scenarios.json")
+
+	if err != nil {
+		fmt.Println("Error opening scenarios file", err)
+		return "", err
+	}
+
+	byteValue, _ := ioutil.ReadAll(scenariosFile)
+	json.Unmarshal(byteValue, &scenarios)
+	n := rand.Int() % len(scenarios)
+
+	scenario := scenarios[n].Scenario
+	instructions += "Scenario: " + scenario + "\n"
+	c.Scenario = scenario
+
+	defer scenariosFile.Close()
 
 	assistant, err := config.OpenAIClient.CreateAssistant(
 		context.Background(),

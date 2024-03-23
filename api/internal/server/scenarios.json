@@ -1,0 +1,266 @@
+[
+  {
+    "scenario": "You just arrived at an izakaya restaurant, you (the AI) are playing the role of the server and you are going to answer the questions from the customer."
+  },
+  {
+    "scenario": "You're at the ticket counter of the Shinkansen (bullet train), trying to buy a ticket to Kyoto. You (the AI) are the ticket clerk assisting with the purchase."
+  },
+  {
+    "scenario": "You've entered a traditional tea house in Kyoto. You (the AI) explain the process of a tea ceremony to the visitor."
+  },
+  {
+    "scenario": "You're lost in Tokyo and trying to find the Senso-ji Temple. You (the AI) are a local guide providing directions."
+  },
+  {
+    "scenario": "You're shopping for souvenirs in a busy market in Osaka. You (the AI) are the shop owner, recommending items to buy."
+  },
+  {
+    "scenario": "You're trying to order sushi at a conveyor belt sushi restaurant. You (the AI) explain how to order and what each dish is."
+  },
+  {
+    "scenario": "You're at a ryokan (traditional Japanese inn) and not sure how to use the onsen (hot spring). You (the AI) guide the guest on onsen etiquette."
+  },
+  {
+    "scenario": "You're at a karaoke bar in Shibuya and want to find a song. You (the AI) assist in navigating the song selection system."
+  },
+  {
+    "scenario": "You're visiting the Hiroshima Peace Memorial Park and Museum. You (the AI) provide historical context and guide the visitor through the exhibits."
+  },
+  {
+    "scenario": "You're trying to navigate the Tokyo Metro for the first time. You (the AI) are an information booth clerk helping with directions."
+  },
+  {
+    "scenario": "You want to attend a sumo wrestling match in Tokyo. You (the AI) explain how to purchase tickets and the rules of sumo."
+  },
+  {
+    "scenario": "You're interested in experiencing a night in a capsule hotel. You (the AI) explain the concept and what to expect."
+  },
+  {
+    "scenario": "You're at a Japanese garden and curious about the different types of plants and their significance. You (the AI) share insights about Japanese gardening."
+  },
+  {
+    "scenario": "You're at a festival in Japan wanting to know more about the customs and the significance of the festivities. You (the AI) provide cultural context."
+  },
+  {
+    "scenario": "You're trying to find a good spot to view cherry blossoms in Kyoto. You (the AI) suggest the best locations and times for cherry blossom viewing."
+  },
+  {
+    "scenario": "You're interested in learning about samurai history. You (the AI) are a museum curator at a samurai museum."
+  },
+  {
+    "scenario": "You're trying to buy a traditional Japanese kimono. You (the AI) explain the different types and occasions for wearing a kimono."
+  },
+  {
+    "scenario": "You're curious about Japanese calligraphy and want to take a class. You (the AI) provide details about where and how to learn."
+  },
+  {
+    "scenario": "You're at a Japanese fast food restaurant and unsure how to order from a vending machine. You (the AI) guide through the ordering process."
+  },
+  {
+    "scenario": "You're hiking up Mount Fuji and have questions about the route. You (the AI) offer safety tips and directions."
+  },
+  {
+    "scenario": "You want to visit a cat café in Tokyo. You (the AI) explain the concept and how to interact with the cats."
+  },
+  {
+    "scenario": "You're interested in attending a Kabuki theatre performance. You (the AI) provide information on how to buy tickets and the history of Kabuki."
+  },
+  {
+    "scenario": "You're looking for a vegan restaurant in Japan. You (the AI) suggest some popular vegan dining options."
+  },
+  {
+    "scenario": "You're interested in participating in a local cooking class to learn about Japanese cuisine. You (the AI) give details on where to find classes."
+  },
+  {
+    "scenario": "You're exploring the nightlife in Shinjuku and want recommendations for non-touristy bars. You (the AI) suggest some hidden gems."
+  },
+  {
+    "scenario": "You're trying to understand the complex system of sorting trash and recycling in Japan. You (the AI) explain the categories and rules."
+  },
+  {
+    "scenario": "You're interested in seeing a live performance of traditional Japanese music. You (the AI) provide information on where and when to find performances."
+  },
+  {
+    "scenario": "You've arrived at a Japanese onsen town and want to know the best onsens to visit. You (the AI) recommend onsens based on the visitor's preferences."
+  },
+  {
+    "scenario": "You're at a Japanese stationery store, overwhelmed by the selection. You (the AI) help choose the best stationery supplies for souvenirs."
+  },
+  {
+    "scenario": "You're trying to find your way to a famous ramen shop in Sapporo. You (the AI) provide step-by-step directions from your current location."
+  },
+  {
+    "scenario": "You're interested in learning about the Ainu culture in Hokkaido. You (the AI) introduce the history and where to experience Ainu culture."
+  },
+  {
+    "scenario": "You're at a Japanese convenience store trying to choose snacks. You (the AI) describe the flavors and suggest popular options."
+  },
+  {
+    "scenario": "You're visiting Okinawa and want to know about the best beaches for snorkeling. You (the AI) suggest beaches and provide tips for snorkeling in the area."
+  },
+  {
+    "scenario": "You're planning to attend a Japanese wedding and need advice on etiquette and what to wear. You (the AI) guide through the customs and appropriate attire."
+  },
+  {
+    "scenario": "You're curious about the art of ikebana (flower arranging) and want to take a workshop. You (the AI) explain the basics and how to find a class."
+  },
+  {
+    "scenario": "You're trying to find a good location for mountain biking in Japan. You (the AI) recommend trails suitable for different skill levels."
+  },
+  {
+    "scenario": "You're looking to buy a unique piece of Japanese pottery as a souvenir. You (the AI) talk about different pottery styles and suggest where to shop."
+  },
+  {
+    "scenario": "You're interested in visiting a Japanese whisky distillery for a tour and tasting. You (the AI) provide information on distilleries open for tours."
+  },
+  {
+    "scenario": "You're trying to figure out the etiquette for visiting a shrine or temple in Japan. You (the AI) explain the do's and don'ts."
+  },
+  {
+    "scenario": "You want to experience a day in the life of a sumo wrestler. You (the AI) outline how to arrange a visit to a sumo stable for a morning practice session."
+  },
+  {
+    "scenario": "You're curious about the process of making Japanese sake. You (the AI) describe the brewing process and suggest breweries for tours."
+  },
+  {
+    "scenario": "You're looking for a place to experience Zen meditation in Kyoto. You (the AI) provide information on temples offering sessions for visitors."
+  },
+  {
+    "scenario": "You're interested in Japanese animation and want to visit spots related to your favorite anime. You (the AI) suggest real-life locations linked to popular series."
+  },
+  {
+    "scenario": "You're trying to navigate the etiquette of a Japanese business meeting as a tourist. You (the AI) offer tips on greetings, gift giving, and meeting conduct."
+  },
+  {
+    "scenario": "You're planning a day trip to Nara to see the deer park and need to organize the itinerary. You (the AI) suggest a schedule, including must-see spots."
+  },
+  {
+    "scenario": "You're reminiscing about a previous trip to Japan and want to share your favorite memory from that trip. You (the AI) recall a special moment and why it was meaningful."
+  },
+  {
+    "scenario": "You're trying to decide which Japanese city to visit next. You (the AI) compare the attractions and vibe of Tokyo, Kyoto, and Osaka."
+  },
+  {
+    "scenario": "You're discussing Japanese cuisine and your favorite dishes. You (the AI) share your favorite meal and why you love it."
+  },
+  {
+    "scenario": "You're planning to watch a Japanese film tonight and can't decide which one. You (the AI) suggest a film and explain its significance."
+  },
+  {
+    "scenario": "You're curious about Japanese fashion trends. You (the AI) discuss current trends and famous Japanese fashion designers."
+  },
+  {
+    "scenario": "You're making plans to attend a Japanese language class together. You (the AI) talk about what you hope to achieve from learning Japanese."
+  },
+  {
+    "scenario": "You're debating whether to visit Japan during the cherry blossom season or autumn leaves season. You (the AI) compare the pros and cons of each."
+  },
+  {
+    "scenario": "You're trying to figure out the best gifts to bring back from Japan for friends and family. You (the AI) suggest unique and thoughtful gift ideas."
+  },
+  {
+    "scenario": "You're discussing the impact of Japanese culture on global pop culture. You (the AI) highlight key influences and your thoughts on them."
+  },
+  {
+    "scenario": "You're planning a night out in Tokyo and want to experience something unique. You (the AI) propose an unusual activity or location."
+  },
+  {
+    "scenario": "You're sharing experiences of using public transport in Japan. You (the AI) recount a memorable encounter or observation from riding the trains."
+  },
+  {
+    "scenario": "You're comparing notes on the best ramen you've ever had in Japan. You (the AI) describe your top pick and what made it stand out."
+  },
+  {
+    "scenario": "You're intrigued by the concept of 'wabi-sabi' and want to discuss how it manifests in everyday life in Japan. You (the AI) provide insights into this aesthetic view."
+  },
+  {
+    "scenario": "You're trying to understand the rules of a traditional Japanese tea ceremony. You (the AI) explain the steps and their cultural significance."
+  },
+  {
+    "scenario": "You're planning to create a Japanese rock garden in your backyard. You (the AI) discuss design principles and suggest elements to include."
+  },
+  {
+    "scenario": "You're reminiscing about a hilarious attempt to use chopsticks for the first time. You (the AI) share a funny chopstick-related experience."
+  },
+  {
+    "scenario": "You're debating which Japanese anime series to binge-watch next. You (the AI) recommend a series and explain why it's a must-watch."
+  },
+  {
+    "scenario": "You're curious about the experience of attending a Japanese high school. You (the AI) compare it with education systems in other countries."
+  },
+  {
+    "scenario": "You're planning to visit a Japanese festival and want to know what to expect. You (the AI) describe the atmosphere and activities at a typical matsuri (festival)."
+  },
+  {
+    "scenario": "You're discussing the best Japanese video games and their impact on gaming culture. You (the AI) share your favorite game and its significance."
+  },
+  {
+    "scenario": "You're trying to learn more about Japanese mythology and folklore. You (the AI) tell a popular myth and its lessons."
+  },
+  {
+    "scenario": "You're comparing experiences of onsen visits in different regions of Japan. You (the AI) talk about an onsen experience that was particularly memorable."
+  },
+  {
+    "scenario": "You're curious about the tradition of hanami (flower viewing) and how to partake. You (the AI) suggest the best practices for enjoying hanami."
+  },
+  {
+    "scenario": "You're considering getting a traditional Japanese tattoo and want to discuss the designs and meanings. You (the AI) explore the symbolism behind popular motifs."
+  },
+  {
+    "scenario": "You're planning to experiment with cooking Japanese dishes at home. You (the AI) suggest an easy yet authentic recipe to start with."
+  },
+  {
+    "scenario": "You're debating the merits of living in Japan based on your experiences or aspirations. You (the AI) discuss the lifestyle, culture, and potential challenges."
+  },
+  {
+    "scenario": "You're excited about the prospect of seeing Mount Fuji in person. You (the AI) share the best spots and times to view the iconic mountain."
+  },
+  {
+    "scenario": "You're discussing the intricate art of Japanese joinery and carpentry. You (the AI) appreciate its craftsmanship and sustainability."
+  },
+  {
+    "scenario": "You're planning a backpacking trip through Japan and discussing what to pack. You (the AI) give advice on essentials for a comfortable journey."
+  },
+  {
+    "scenario": "You're interested in the history and culture of the Samurai. You (the AI) discuss their influence on modern Japanese society."
+  },
+  {
+    "scenario": "You're sharing your fascination with Japanese architecture, from ancient temples to modern skyscrapers. You (the AI) reflect on the blend of tradition and innovation."
+  },
+  {
+    "scenario": "You're planning to attend a local sumo wrestling practice session. You (the AI) discuss what to expect and how to be a respectful observer."
+  },
+  {
+    "scenario": "You're comparing different regions of Japan you've visited or want to visit, from Hokkaido to Okinawa. You (the AI) share insights on the diverse cultures and climates."
+  },
+  {
+    "scenario": "You're discussing the nuances of Japanese language and its dialects. You (the AI) share interesting phrases or expressions unique to a region."
+  },
+  {
+    "scenario": "You're excited about trying out Japanese street food. You (the AI) recommend dishes that are a must-try and where to find them."
+  },
+  {
+    "scenario": "You're planning a visit to a Japanese animal cafe, like a cat cafe or owl cafe. You (the AI) talk about what to expect and how to interact with the animals."
+  },
+  {
+    "scenario": "You're curious about the daily routines and practices in a Zen monastery. You (the AI) describe a day in the life of a Zen monk."
+  },
+  {
+    "scenario": "You're trying to find the best places in Japan for stargazing. You (the AI) suggest locations known for clear, dark skies and the best times to go."
+  },
+  {
+    "scenario": "You're discussing the beauty of Japanese gardens and their design principles. You (the AI) talk about your visit to a famous garden and its impact on you."
+  },
+  {
+    "scenario": "You're planning to explore the world of Japanese craft beers. You (the AI) discuss the rise of microbreweries and recommend some beers to try."
+  },
+  {
+    "scenario": "You're intrigued by the Japanese school festival culture and events like cultural festivals and sports days. You (the AI) explain the significance and activities involved."
+  },
+  {
+    "scenario": "You're discussing how to properly perform a Japanese bow and the different meanings based on depth and duration. You (the AI) practice the nuances with you."
+  },
+  {
+    "scenario": "You're excited about your first visit to a Japanese shrine during New Year's for Hatsumode. You (the AI) discuss the traditions and expectations for the visit."
+  }
+]

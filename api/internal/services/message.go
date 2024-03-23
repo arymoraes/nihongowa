@@ -55,6 +55,8 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 		return models.Message{}, aiErr
 	}
 
+	aiReply.IsAI = true
+
 	conversation.AddMessage(aiReply)
 
 	return aiReply, nil
