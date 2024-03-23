@@ -33,7 +33,12 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 		return models.Message{}, err
 	}
 
-	conversation := models.Conversation{ID: id}
+	conversation, err := models.GetConversationById(id)
+
+	if err != nil {
+		log.Printf("Error getting conversation by ID: %v", err)
+		return models.Message{}, err
+	}
 
 	if err := conversation.AddMessage(message); err != nil {
 		log.Printf("Error posting message to conversation: %v", err)
@@ -41,7 +46,7 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 	}
 
 	// AI Reply
-	aiReply, aiErr := SendMessageToChatGPT(message.Content)
+	aiReply, aiErr := SendMessageToChatGPT(message.Content, conversation)
 
 	println(aiReply.Content)
 

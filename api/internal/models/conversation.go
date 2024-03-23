@@ -9,8 +9,25 @@ import (
 )
 
 type Conversation struct {
-	ID       gocql.UUID `json:"id"`
-	Messages []Message  `json:"messages"`
+	ID          gocql.UUID `json:"id"`
+	Messages    []Message  `json:"messages"`
+	ThreadID    string     `json:"thread_id"`
+	AssistantID string     `json:"assistant_id"`
+	Scenario    string     `json:"scenario"`
+}
+
+func GetConversationById(conversationID gocql.UUID) (*Conversation, error) {
+	conversation := &Conversation{ID: conversationID}
+
+	// err := config.Session.Query("SELECT COUNT(*) FROM conversations WHERE id = ?", conversationID).Consistency(gocql.One).Scan(&conversation)
+	err := config.Session.Query(`SELECT id FROM conversations WHERE id = ? LIMIT 1`,
+		conversation.ID).Consistency(gocql.One).Scan(&conversation.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return conversation, nil
 }
 
 func NewConversation(conversationID gocql.UUID) (*Conversation, error) {
