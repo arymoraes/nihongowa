@@ -1,13 +1,13 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
 type Message struct {
-    Content               string    `json:"content"`
-    Translation           string    `json:"translation"`
-    WordByWordTranslation []string  `json:"wordByWordTranslation"`
-    CreatedAt             time.Time `json:"createdAt"`
-    UpdatedAt             time.Time `json:"updatedAt"`
+	Content               string    `json:"content"`
+	Translation           string    `json:"translation"`
+	WordByWordTranslation []string  `json:"wordByWordTranslation"`
+	CreatedAt             time.Time `json:"createdAt"`
+	UpdatedAt             time.Time `json:"updatedAt"`
 }

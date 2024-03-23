@@ -34,7 +34,7 @@ func (c *Conversation) AddMessage(message Message) error {
 	messageMap := map[string]interface{}{
 		"content":               message.Content,
 		"translation":           message.Translation,
-		"wordbywordtranslation": message.WordByWordTranslation,
+		"wordbywordtranslation": []string{},
 		"createdat":             message.CreatedAt,
 		"updatedat":             message.UpdatedAt,
 	}

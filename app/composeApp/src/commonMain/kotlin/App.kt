@@ -37,7 +37,15 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+
+
 import model.Message
+
+expect fun currentTimeMillis(): Long
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -45,19 +53,25 @@ import model.Message
 fun App() {
     val messages = remember { mutableStateOf<List<Message>>(emptyList()) }
     val inputText = remember { mutableStateOf("") }
+    // Using a timestamp to trigger refreshes; it changes every time we want to refetch messages
+    val lastRefresh = remember { mutableStateOf(currentTimeMillis()) }
 
     MaterialTheme {
-        LaunchedEffect(Unit) {
+        // Initial fetch and refetch on demand, triggered by changes to lastRefresh
+        LaunchedEffect(lastRefresh.value) {
             messages.value = fetchData()
         }
+
         Column(Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(messages.value) { message ->
                     MessageCard(message = message)
                 }
             }
-            // Input field with a send button
-            MessageInputField(inputText = inputText)
+            MessageInputField(inputText = inputText, onMessageSent = {
+                // Triggering a refresh by updating the timestamp
+                lastRefresh.value = System.currentTimeMillis()
+            })
         }
     }
 }
@@ -108,7 +122,9 @@ fun MessageCard(message: Message) {
 }
 
 @Composable
-fun MessageInputField(inputText: MutableState<String>) {
+fun MessageInputField(inputText: MutableState<String>, onMessageSent: () -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,10 +140,13 @@ fun MessageInputField(inputText: MutableState<String>) {
         )
         Button(
             onClick = {
-                // Handle send message action here
-                println("Send message: ${inputText.value}")
-                // Clear the input field after sending
-                inputText.value = ""
+                coroutineScope.launch {
+                    val success = sendMessage(inputText.value)
+                    if (success) {
+                        onMessageSent()
+                        inputText.value = "" // Clear the input field after sending
+                    }
+                }
             },
             modifier = Modifier.padding(start = 8.dp)
         ) {
@@ -151,5 +170,28 @@ suspend fun fetchData(): List<Message> {
     } catch (e: Exception) {
         println("Error: ${e.message}")
         return emptyList()
+    }
+}
+
+suspend fun sendMessage(message: String): Boolean {
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
+
+    return try {
+        val response: HttpResponse = client.submitForm(
+            url = "http://192.168.1.71:1323/messages/582633d3-e87c-4ef1-9ff6-75f6c3c80751",
+            formParameters = Parameters.build {
+                append("message", message)
+            }
+        )
+        response.status == HttpStatusCode.OK
+    } catch (e: Exception) {
+        println("Error sending message: ${e.message}")
+        false
+    } finally {
+        client.close()
     }
 }

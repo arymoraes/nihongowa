@@ -90,6 +90,8 @@ func SendMessageToChatGPT(message string) (models.Message, error) {
 
 	response := resp.Choices[0].Message.Content
 
+	println(response)
+
 	unmarshal_err := json.Unmarshal([]byte(response), &response_model)
 
 	if unmarshal_err != nil {

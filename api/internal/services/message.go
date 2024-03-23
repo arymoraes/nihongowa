@@ -43,10 +43,14 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 	// AI Reply
 	aiReply, aiErr := SendMessageToChatGPT(message.Content)
 
+	println(aiReply.Content)
+
 	if aiErr != nil {
 		log.Printf("Error sending message to ChatGPT: %v", aiErr)
 		return models.Message{}, aiErr
 	}
+
+	conversation.AddMessage(aiReply)
 
 	return aiReply, nil
 }
