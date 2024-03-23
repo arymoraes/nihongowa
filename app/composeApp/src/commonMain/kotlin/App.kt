@@ -1,5 +1,7 @@
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,7 +17,6 @@ import kotlinx.serialization.json.*
 import model.Message
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.*
 
 expect fun currentTimeMillis(): Long
 
@@ -26,18 +27,27 @@ fun App() {
     val messages = remember { mutableStateOf<List<Message>>(emptyList()) }
     val inputText = remember { mutableStateOf("") }
     val lastRefresh = remember { mutableStateOf(currentTimeMillis()) }
+    val listState = rememberLazyListState() // Step 1: Create LazyListState
 
     MaterialTheme {
+        // Fetch messages
         LaunchedEffect(lastRefresh.value) {
             messages.value = fetchData()
         }
 
-        Column(Modifier.fillMaxSize()) {
-            // Restrict the LazyColumn (MessageList) to a certain max height
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                MessageList(messages = messages.value)
+        // Scroll to the bottom when the list of messages changes
+        LaunchedEffect(messages.value.size) {
+            if (messages.value.isNotEmpty()) {
+                listState.scrollToItem(messages.value.size - 1)
             }
-            // Ensure the MessageInputField is always visible at the bottom
+        }
+
+        Column(Modifier.fillMaxSize()) {
+            LazyColumn(state = listState, modifier = Modifier.weight(1f).fillMaxWidth()) {
+                items(messages.value) { message ->
+                    MessageCard(message = message)
+                }
+            }
             MessageInputField(inputText = inputText, onMessageSent = {
                 lastRefresh.value = currentTimeMillis()
             })

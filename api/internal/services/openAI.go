@@ -60,7 +60,7 @@ func SendMessageToChatGPT(message string) (models.Message, error) {
 		"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response. This is the JSON format:\n" +
 		"{\n" +
 		"    \"content\": \"こんにちは\",\n" +
-		"    \"translation\": \"Hello\",\n" +
+		"    \"translation\": \"Hello\"\n" +
 		"}\n" +
 		"Again, kanjis are forbidden!!! Do not use kanjis inside `content`"
 
@@ -89,8 +89,6 @@ func SendMessageToChatGPT(message string) (models.Message, error) {
 	var response_model models.Message
 
 	response := resp.Choices[0].Message.Content
-
-	println(response)
 
 	unmarshal_err := json.Unmarshal([]byte(response), &response_model)
 
