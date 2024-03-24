@@ -46,6 +46,10 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+            implementation(libs.navigator)
+            implementation(libs.navigator.tabs)
+            implementation(libs.navigator.transitions)
         }
     }
 }
