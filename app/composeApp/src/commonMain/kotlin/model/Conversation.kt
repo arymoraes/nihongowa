@@ -10,4 +10,7 @@ data class Conversation(
     val thread_id: String,
     val assistant_id: String,
     val scenario: String,
+    val assistant_name: String?,
+    val last_message_at: String?,
+    val run_id: String?,
 )

@@ -63,11 +63,11 @@ func PostConversation(c echo.Context) error {
 		ConversationID string `json:"conversation_id"`
 	}
 
-	conversation_id, err := services.CreateConversation()
+	conversation, err := services.CreateConversationScenario()
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation_id.String()})
+	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation.ID.String()})
 }

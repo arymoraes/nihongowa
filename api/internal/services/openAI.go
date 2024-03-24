@@ -27,77 +27,96 @@ var instructions = "You will hold a conversation in Japanese. You will receive a
 	"}\n" +
 	"If the user sends a message in English or in romanji, you will respond in Japanese like normal"
 
-func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
-	if conversation.AssistantID == "" {
-		assistantId, err := createAssistant(conversation)
+func CreateConversationScenario() (models.Conversation, error) {
+	conversation := models.Conversation{}
 
-		if err != nil {
-			fmt.Println("Error creating assistant", err)
-			return models.Message{}, err
-		}
+	assistantId, err := createAssistant(&conversation)
 
-		conversation.AssistantID = assistantId
+	if err != nil {
+		fmt.Println("Error creating assistant", err)
+		return models.Conversation{}, err
 	}
 
-	if conversation.ThreadID == "" {
-		// In case the thread doesn't exist, we create a new one
-		run, err := createThread(conversation.AssistantID, message)
+	conversation.AssistantID = assistantId
+
+	run, err := createThread(conversation.AssistantID, "こんにちは")
+
+	if err != nil {
+		return models.Conversation{}, err
+	}
+
+	conversation.ThreadID = run.ThreadID
+
+	for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
+		response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
 
 		if err != nil {
-			return models.Message{}, err
+			fmt.Println("Error retrieving run", err)
 		}
 
-		conversation.ThreadID = run.ThreadID
+		run = response
+		time.Sleep(1000 * time.Millisecond)
+	}
 
-		// We save the new ThreadID and AssistantID in the conversation
-		models.UpdateConversation(conversation)
+	message, err := retrieveAndProcessMessages(conversation.ThreadID)
 
-		for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
-			response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
+	if err != nil {
+		return models.Conversation{}, err
+	}
 
-			if err != nil {
-				fmt.Println("Error retrieving run", err)
-			}
+	conversation.Messages = []models.Message{message}
+	conversation.RunID = run.ID
 
-			run = response
-			time.Sleep(1000 * time.Millisecond)
-		}
-	} else {
-		// If the thread exists, we spawn a run
-		run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
-			AssistantID:  conversation.AssistantID,
-			Model:        openai.GPT3Dot5Turbo,
-			Instructions: instructions,
-		})
+	_, err = CreateConversation(&conversation)
+
+	if err != nil {
+		fmt.Println("Error creating conversation", err)
+		return models.Conversation{}, err
+	}
+
+	return conversation, nil
+}
+
+func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
+	// run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
+	// 	AssistantID:  conversation.AssistantID,
+	// 	Model:        openai.GPT3Dot5Turbo,
+	// 	Instructions: instructions,
+	// })
+
+	// run, err := config.OpenAIClient.RetrieveRun(context.Background(), conversation.ThreadID, conversation.RunID)
+
+	// Send a message
+	_, err := config.OpenAIClient.CreateMessage(context.Background(), conversation.ThreadID, openai.MessageRequest{
+		Role:    openai.ChatMessageRoleUser,
+		Content: message,
+	})
+
+	if err != nil {
+		fmt.Println("Error creating message", err)
+		return models.Message{}, err
+	}
+
+	run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
+		AssistantID:  conversation.AssistantID,
+		Model:        openai.GPT3Dot5Turbo,
+		Instructions: instructions,
+	})
+
+	if err != nil {
+		fmt.Println("Error creating run", err)
+		return models.Message{}, err
+	}
+
+	for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
+		response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
 
 		if err != nil {
-			fmt.Println("Error creating run", err)
-			return models.Message{}, err
+			fmt.Println("Error retrieving run", err)
 		}
 
-		// Send a message
-		_, err = config.OpenAIClient.CreateMessage(context.Background(), conversation.ThreadID, openai.MessageRequest{
-			Role:    openai.ChatMessageRoleUser,
-			Content: message,
-		})
-
-		if err != nil {
-			fmt.Println("Error creating message", err)
-			return models.Message{}, err
-		}
-
-		for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
-			response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
-
-			fmt.Println("run", run)
-
-			if err != nil {
-				fmt.Println("Error retrieving run", err)
-			}
-
-			run = response
-			time.Sleep(1000 * time.Millisecond)
-		}
+		run = response
+		time.Sleep(1000 * time.Millisecond)
 	}
 
 	return retrieveAndProcessMessages(conversation.ThreadID)
@@ -167,19 +186,6 @@ func createThread(assistantId string, message string) (openai.Run, error) {
 	return run, nil
 }
 
-// func createRunInThread(conversation *models.Conversation) error {
-// 	run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
-// 		AssistantID: conversation.AssistantID,
-// 		Model:       openai.GPT3Dot5Turbo,
-// 	})
-// 	if err != nil {
-// 		fmt.Println("Error creating run", err)
-// 		return err
-// 	}
-
-// 	return waitForRunCompletion(&run)
-// }
-
 func retrieveAndProcessMessages(threadID string) (models.Message, error) {
 	numMessages := 1
 	messages, err := config.OpenAIClient.ListMessage(context.Background(), threadID, &numMessages, nil, nil, nil)
@@ -188,11 +194,11 @@ func retrieveAndProcessMessages(threadID string) (models.Message, error) {
 		return models.Message{}, err
 	}
 
-	fmt.Println("messages", messages)
-
 	if len(messages.Messages) == 0 {
 		return models.Message{}, fmt.Errorf("no messages found in thread")
 	}
+
+	fmt.Println("messages", messages.Messages[0].Content[0].Text.Value)
 
 	var responseModel models.Message
 	response := messages.Messages[0].Content[0].Text.Value
@@ -204,16 +210,3 @@ func retrieveAndProcessMessages(threadID string) (models.Message, error) {
 
 	return responseModel, nil
 }
-
-// func waitForRunCompletion(run *openai.Run) error {
-// 	for run.Status == openai.RunStatusQueued || run.Status == openai.RunStatusInProgress {
-// 		response, err := config.OpenAIClient.RetrieveRun(context.Background(), run.ThreadID, run.ID)
-// 		if err != nil {
-// 			fmt.Println("Error retrieving run", err)
-// 			return err
-// 		}
-// 		run = &response
-// 		time.Sleep(1000 * time.Millisecond)
-// 	}
-// 	return nil
-// }

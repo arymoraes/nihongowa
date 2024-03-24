@@ -9,18 +9,22 @@ import (
 )
 
 type Conversation struct {
-	ID          gocql.UUID `json:"id"`
-	Messages    []Message  `json:"messages"`
-	ThreadID    string     `json:"thread_id"`
-	AssistantID string     `json:"assistant_id"`
-	Scenario    string     `json:"scenario"`
+	ID            gocql.UUID `json:"id"`
+	Messages      []Message  `json:"messages"`
+	AssistantName string     `json:"assistant_name"`
+	RunID         string     `json:"run_id"`
+	ThreadID      string     `json:"thread_id"`
+	AssistantID   string     `json:"assistant_id"`
+	Scenario      string     `json:"scenario"`
+	LastMessageAt time.Time  `json:"last_message_at"`
 }
 
 func GetConversationById(conversationID gocql.UUID) (*Conversation, error) {
 	conversation := &Conversation{ID: conversationID}
 
-	err := config.Session.Query(`SELECT id FROM conversations WHERE id = ? LIMIT 1`,
-		conversation.ID).Consistency(gocql.One).Scan(&conversation.ID)
+	err := config.Session.Query(`SELECT id, assistantname, threadid, assistantid, scenario, runid FROM conversations WHERE id = ? LIMIT 1`,
+		conversation.ID).Consistency(gocql.One).Scan(&conversation.ID, &conversation.AssistantName,
+		&conversation.ThreadID, &conversation.AssistantID, &conversation.Scenario, &conversation.RunID)
 
 	if err != nil {
 		return nil, err
