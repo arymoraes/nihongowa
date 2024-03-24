@@ -30,6 +30,7 @@ func main() {
 	e.GET("/messages/:conversation_id", handlers.GetMessagesFromConversation)
 	e.POST("/messages/:conversation_id", handlers.PostMessageToConversation)
 	e.POST("/conversations", handlers.PostConversation)
+	e.GET("/conversations", handlers.GetLastConversations)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

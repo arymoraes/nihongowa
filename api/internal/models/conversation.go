@@ -19,7 +19,6 @@ type Conversation struct {
 func GetConversationById(conversationID gocql.UUID) (*Conversation, error) {
 	conversation := &Conversation{ID: conversationID}
 
-	// err := config.Session.Query("SELECT COUNT(*) FROM conversations WHERE id = ?", conversationID).Consistency(gocql.One).Scan(&conversation)
 	err := config.Session.Query(`SELECT id FROM conversations WHERE id = ? LIMIT 1`,
 		conversation.ID).Consistency(gocql.One).Scan(&conversation.ID)
 
@@ -77,6 +76,35 @@ func (c *Conversation) AddMessage(message Message) error {
 	c.Messages = append(c.Messages, message)
 
 	return nil
+}
+
+func GetLastConversations() ([]Conversation, error) {
+	iter := config.Session.Query("SELECT id FROM conversations LIMIT 10").Iter()
+
+	conversations := []Conversation{}
+
+	m := map[string]interface{}{}
+	for iter.MapScan(m) {
+		conversationID, ok := m["id"].(gocql.UUID)
+		if !ok {
+			continue
+		}
+
+		conversation, err := GetConversationById(conversationID)
+		if err != nil {
+			return nil, err
+		}
+
+		conversations = append(conversations, *conversation)
+
+		m = map[string]interface{}{}
+	}
+
+	if err := iter.Close(); err != nil {
+		return nil, err
+	}
+
+	return conversations, nil
 }
 
 func (c *Conversation) GetMessages() error {

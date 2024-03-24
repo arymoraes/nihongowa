@@ -61,3 +61,14 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 
 	return aiReply, nil
 }
+
+func GetLastConversations() ([]models.Conversation, error) {
+	conversations, err := models.GetLastConversations()
+
+	if err != nil {
+		log.Printf("Error getting last conversations: %v", err)
+		return nil, err
+	}
+
+	return conversations, nil
+}

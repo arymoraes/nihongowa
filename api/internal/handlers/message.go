@@ -27,6 +27,17 @@ func GetMessagesFromConversation(c echo.Context) error {
 	return c.JSON(http.StatusOK, messages)
 }
 
+// e.GET("/conversations", getLastConversations)
+func GetLastConversations(c echo.Context) error {
+	conversations, err := services.GetLastConversations()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, conversations)
+}
+
 // e.POST("/messages/:conversation_id", postMessageToConversation)
 func PostMessageToConversation(c echo.Context) error {
 	id := c.Param("conversation_id")
