@@ -14,7 +14,7 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation." +
+var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation. You will try to be brief in your responses (1-2 sentences)" +
 	"You will use hiragana and katakana, and avoid using kanjis\n" +
 	"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response." +
 	"The JSON will contain: `content`, `romanji` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese." +
