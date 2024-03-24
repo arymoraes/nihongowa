@@ -23,7 +23,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.launch
 
 @Composable
-fun MessageInputField(inputText: MutableState<String>, onMessageSent: () -> Unit) {
+fun MessageInputField(inputText: MutableState<String>, onMessageSent: () -> Unit, conversationId: String) {
     val coroutineScope = rememberCoroutineScope()
 
     Row(
@@ -42,7 +42,7 @@ fun MessageInputField(inputText: MutableState<String>, onMessageSent: () -> Unit
         Button(
             onClick = {
                 coroutineScope.launch {
-                    val success = sendMessage(inputText.value)
+                    val success = sendMessage(inputText.value, conversationId)
                     if (success) {
                         onMessageSent()
                         inputText.value = "" // Clear the input field after sending
@@ -56,7 +56,7 @@ fun MessageInputField(inputText: MutableState<String>, onMessageSent: () -> Unit
     }
 }
 
-suspend fun sendMessage(message: String): Boolean {
+suspend fun sendMessage(message: String, conversationId: String): Boolean {
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
@@ -65,7 +65,7 @@ suspend fun sendMessage(message: String): Boolean {
 
     return try {
         val response: HttpResponse = client.submitForm(
-            url = "http://192.168.1.71:1323/messages/cf45fcce-a794-47b6-aae4-cf26c0bce61a",
+            url = "http://192.168.1.71:1323/messages/$conversationId",
             formParameters = Parameters.build {
                 append("message", message)
             }

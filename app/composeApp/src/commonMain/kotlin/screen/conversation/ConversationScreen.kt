@@ -35,7 +35,7 @@ data class ConversationScreen(val conversationId: String): Screen {
         MaterialTheme {
             // Fetch messages
             LaunchedEffect(lastRefresh.value) {
-                messages.value = fetchData()
+                messages.value = fetchData(conversationId)
             }
 
             // Scroll to the bottom when the list of messages changes
@@ -53,13 +53,13 @@ data class ConversationScreen(val conversationId: String): Screen {
                 }
                 MessageInputField(inputText = inputText, onMessageSent = {
                     lastRefresh.value = currentTimeMillis()
-                })
+                }, conversationId = conversationId)
             }
         }
     }
 }
 
-suspend fun fetchData(): List<Message> {
+suspend fun fetchData(conversationId: String): List<Message> {
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
@@ -67,7 +67,7 @@ suspend fun fetchData(): List<Message> {
     }
 
     try {
-        val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/cf45fcce-a794-47b6-aae4-cf26c0bce61a")
+        val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/$conversationId")
 
         return Json.decodeFromString<List<Message>>(response.bodyAsText())
 
