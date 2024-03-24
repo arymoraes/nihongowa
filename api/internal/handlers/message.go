@@ -61,6 +61,7 @@ func PostMessageToConversation(c echo.Context) error {
 func PostConversation(c echo.Context) error {
 	type PostConversationResponse struct {
 		ConversationID string `json:"conversation_id"`
+		AssistantName  string `json:"assistant_name"`
 	}
 
 	conversation, err := services.CreateConversationScenario()
@@ -69,5 +70,5 @@ func PostConversation(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation.ID.String()})
+	return c.JSON(http.StatusOK, PostConversationResponse{ConversationID: conversation.ID.String(), AssistantName: conversation.AssistantName})
 }

@@ -34,7 +34,7 @@ import model.Message
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 
-data class ConversationScreen(val conversationId: String): Screen {
+data class ConversationScreen(val conversationId: String, val assistantName: String): Screen {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
@@ -48,7 +48,7 @@ data class ConversationScreen(val conversationId: String): Screen {
             Column(Modifier.fillMaxSize()) {
                 // TopAppBar as a header
                 TopAppBar(
-                    title = { Text(text = "Conversation: $conversationId") },
+                    title = { Text(text = "$assistantName") },
                     backgroundColor = Color.Blue, // Customize as needed
                     contentColor = Color.White,
                     navigationIcon = {

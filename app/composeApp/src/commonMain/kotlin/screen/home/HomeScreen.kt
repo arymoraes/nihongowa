@@ -15,7 +15,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import currentTimeMillis
@@ -56,9 +59,10 @@ class HomeScreen: Screen {
                 onClick = {
                     // Use a coroutine to call createConversation and navigate
                     CoroutineScope(Dispatchers.Main).launch {
-                        val newConversationId = createConversation()
-                        newConversationId?.let {
-                            navigator?.push(ConversationScreen(it))
+                        val response = createConversation()
+                        response?.let {
+                            // Assuming ConversationScreen now takes a PostConversationResponse or similar parameters
+                            navigator?.push(ConversationScreen(it.conversationID, it.assistantName))
                         } ?: run {
                             println("Failed to create a new conversation.")
                         }
@@ -74,8 +78,10 @@ class HomeScreen: Screen {
             // Display conversations in a list
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(conversations.value) { conversation ->
+                    // Make sure ConversationCard and the push method are correctly handling the conversation object
                     ConversationCard(conversation = conversation) {
-                        navigator?.push(ConversationScreen(conversation.id))
+                        // Assuming ConversationScreen expects an ID and maybe an assistantName
+                        navigator?.push(ConversationScreen(conversation.id, conversation.assistant_name))
                     }
                 }
             }
@@ -96,8 +102,18 @@ fun ConversationCard(conversation: Conversation, onClick: () -> Unit) {
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            Text(text = "Conversation ID: ${conversation.id}")
-            // You can add more details here as needed
+            conversation.assistant_name?.let {
+                Text(
+                    text = it,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = conversation.scenario,
+                fontSize = 14.sp, // Smaller font size
+                color = Color.Gray, // Muted color
+                maxLines = 1 // Ensure it's truncated to one line
+            )
         }
     }
 }
@@ -121,9 +137,12 @@ suspend fun fetchData(): List<Conversation> {
 }
 
 @Serializable
-data class PostConversationResponse(@SerialName("conversation_id") val ConversationID: String)
+data class PostConversationResponse(
+    @SerialName("conversation_id") val conversationID: String,
+    @SerialName("assistant_name") val assistantName: String // Ensure this matches the JSON property name
+)
 
-suspend fun createConversation(): String? {
+suspend fun createConversation(): PostConversationResponse? {
     val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
@@ -133,8 +152,7 @@ suspend fun createConversation(): String? {
     return try {
         val response: HttpResponse = client.post("http://192.168.1.71:1323/conversations")
         if (response.status == HttpStatusCode.OK) {
-            val responseBody = Json.decodeFromString<PostConversationResponse>(response.bodyAsText())
-            responseBody.ConversationID
+            Json.decodeFromString<PostConversationResponse>(response.bodyAsText())
         } else {
             println("Failed to create conversation, status code: ${response.status}")
             null

@@ -83,7 +83,7 @@ func (c *Conversation) AddMessage(message Message) error {
 }
 
 func GetLastConversations() ([]Conversation, error) {
-	iter := config.Session.Query("SELECT id FROM conversations LIMIT 10").Iter()
+	iter := config.Session.Query("SELECT id, assistantname FROM conversations LIMIT 10").Iter()
 
 	conversations := []Conversation{}
 

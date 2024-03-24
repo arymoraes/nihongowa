@@ -15,9 +15,9 @@ import (
 )
 
 var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation." +
-	"You will only use hiragana and katakana, kanjis are forbidden.\n" +
+	"You will use hiragana and katakana, and avoid using kanjis\n" +
 	"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response." +
-	"The JSON will contain: `content` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese." +
+	"The JSON will contain: `content`, `romanji` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese." +
 	"This is the JSON format:\n" +
 	"{\n" +
 	"    \"content\": \"こんにちは\",\n" +
@@ -25,7 +25,8 @@ var instructions = "You will hold a conversation in Japanese. You will receive a
 	"    \"romanji\": \"konnichiwa\"\n" +
 	"    \"user_message_translated\": \"Hello\"\n" +
 	"}\n" +
-	"If the user sends a message in English or in romanji, you will respond in Japanese like normal"
+	"If the user sends a message in English or in romanji, you will respond in Japanese like normal. The conversation will be started with a user message of \"こんにちは\".\n" +
+	"In which you will use the scenario I give you to create a conversation."
 
 func CreateConversationScenario() (models.Conversation, error) {
 	conversation := models.Conversation{}
@@ -78,14 +79,6 @@ func CreateConversationScenario() (models.Conversation, error) {
 }
 
 func SendMessageToChatGPT(message string, conversation *models.Conversation) (models.Message, error) {
-	// run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
-	// 	AssistantID:  conversation.AssistantID,
-	// 	Model:        openai.GPT3Dot5Turbo,
-	// 	Instructions: instructions,
-	// })
-
-	// run, err := config.OpenAIClient.RetrieveRun(context.Background(), conversation.ThreadID, conversation.RunID)
-
 	// Send a message
 	_, err := config.OpenAIClient.CreateMessage(context.Background(), conversation.ThreadID, openai.MessageRequest{
 		Role:    openai.ChatMessageRoleUser,
@@ -97,10 +90,12 @@ func SendMessageToChatGPT(message string, conversation *models.Conversation) (mo
 		return models.Message{}, err
 	}
 
+	scenario := conversation.Scenario
+
 	run, err := config.OpenAIClient.CreateRun(context.Background(), conversation.ThreadID, openai.RunRequest{
 		AssistantID:  conversation.AssistantID,
 		Model:        openai.GPT3Dot5Turbo,
-		Instructions: instructions,
+		Instructions: instructions + "Scenario: " + scenario + "\n",
 	})
 
 	if err != nil {
@@ -127,9 +122,27 @@ type Scenario struct {
 }
 
 func createAssistant(c *models.Conversation) (string, error) {
-	var name = "Nihongowa Assistant"
+	// Generate Assistant Name
+	names := []string{}
+	namesFile, err := os.Open("names.json")
+
+	if err != nil {
+		fmt.Println("Error opening names file", err)
+		return "", err
+	}
+
+	namesByteValue, _ := ioutil.ReadAll(namesFile)
+	json.Unmarshal(namesByteValue, &names)
+	names_n := rand.Int() % len(names)
+
+	assistantName := names[names_n]
+
+	defer namesFile.Close()
+
+	var name = assistantName
 	var description = "A Japanese language learning assistant"
 
+	// Generate Scenario
 	var scenarios []Scenario
 
 	scenariosFile, err := os.Open("scenarios.json")
@@ -146,6 +159,7 @@ func createAssistant(c *models.Conversation) (string, error) {
 	scenario := scenarios[n].Scenario
 	instructions += "Scenario: " + scenario + "\n"
 	c.Scenario = scenario
+	c.AssistantName = assistantName
 
 	defer scenariosFile.Close()
 
@@ -197,8 +211,6 @@ func retrieveAndProcessMessages(threadID string) (models.Message, error) {
 	if len(messages.Messages) == 0 {
 		return models.Message{}, fmt.Errorf("no messages found in thread")
 	}
-
-	fmt.Println("messages", messages.Messages[0].Content[0].Text.Value)
 
 	var responseModel models.Message
 	response := messages.Messages[0].Content[0].Text.Value
