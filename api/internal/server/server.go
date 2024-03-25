@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"nihongowa/internal/config"
 	"nihongowa/internal/handlers"
@@ -11,7 +12,13 @@ import (
 )
 
 func main() {
-	cluster := gocql.NewCluster("localhost")
+	cluster_name := "localhost"
+
+	if os.Getenv("ENVIRONMENT") != "Docker" {
+		cluster_name = "cassandra"
+	}
+
+	cluster := gocql.NewCluster(cluster_name)
 	cluster.Keyspace = "nihongowa"
 	session, err := cluster.CreateSession()
 

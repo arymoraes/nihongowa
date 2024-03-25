@@ -1,10 +1,22 @@
 version: '3'
 services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "1323:1323"
+    depends_on:
+      - cassandra
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENVIRONMENT=Docker
+
   cassandra:
     image: cassandra:latest
     container_name: cassandra_db
     ports:
-      - "9042:9042" # CQL
+      - "9042:9042"
     environment:
       - CASSANDRA_CLUSTER_NAME=TestCluster
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
