@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"nihongowa/internal/config"
 	"nihongowa/internal/handlers"
@@ -12,21 +13,7 @@ import (
 )
 
 func main() {
-	cluster_name := "localhost"
-
-	if os.Getenv("ENVIRONMENT") != "Docker" {
-		cluster_name = "cassandra"
-	}
-
-	cluster := gocql.NewCluster(cluster_name)
-	cluster.Keyspace = "nihongowa"
-	session, err := cluster.CreateSession()
-
-	if err != nil {
-		panic(err)
-	}
-
-	config.Init(session)
+	connectToCassandra(0)
 	config.OpenAIInit()
 
 	e := echo.New()
@@ -40,4 +27,29 @@ func main() {
 	e.GET("/conversations", handlers.GetLastConversations)
 
 	e.Logger.Fatal(e.Start(":1323"))
+}
+
+func connectToCassandra(retryAttempt int) {
+	cluster_name := "localhost"
+
+	if os.Getenv("ENVIRONMENT") == "Docker" {
+		cluster_name = "cassandra"
+	}
+
+	if retryAttempt > 5 {
+		panic("Failed to connect to Cassandra")
+	}
+
+	cluster := gocql.NewCluster(cluster_name)
+	cluster.Keyspace =
+		"nihongowa"
+	session, err := cluster.CreateSession()
+
+	if err != nil {
+		time.Sleep(20 * time.Second)
+		connectToCassandra(retryAttempt + 1)
+		return
+	}
+
+	config.Init(session)
 }

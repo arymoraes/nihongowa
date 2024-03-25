@@ -7,18 +7,20 @@ WORKDIR /app
 # Copy go mod and sum files.
 COPY go.mod go.sum ./
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed.
+# Download all dependencies.
 RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container.
 COPY . .
 
-# Build the Go app. Adjust the build command according to your application's structure.
-# Note: Assuming the Dockerfile is placed in the root and your structure starts from there.
+# Copy the wait-for-cassandra script
+COPY startup.sh /startup.sh
+
+# Build the Go app
 RUN go build -o server ./internal/server
 
-# Expose port 8080 to the outside world.
-EXPOSE 8080
+# Expose port 1323 to the outside world.
+EXPOSE 1323
 
 # Command to run the executable.
-CMD ["./server"]
+CMD ["/startup.sh", "cassandra", "9042", "./server"]

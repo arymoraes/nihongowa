@@ -7,7 +7,7 @@ services:
     ports:
       - "1323:1323"
     depends_on:
-      - cassandra
+      - startup
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ENVIRONMENT=Docker
@@ -25,6 +25,15 @@ services:
     volumes:
       - cassandra_data:/var/lib/cassandra
     restart: unless-stopped
+
+  startup:
+      image: cassandra:4
+      depends_on:
+        - cassandra
+      restart: "no"
+      entrypoint: ["/startup.sh"]
+      volumes:
+        - ./startup.sh:/startup.sh
 
 volumes:
   cassandra_data:
