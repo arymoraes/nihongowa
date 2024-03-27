@@ -8,14 +8,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var BasePath string = ""
+
 func Bootstrap() {
 	loadEnv()
+	loadBasePath()
 	connectToCassandra(0)
 	openAIInit()
 }
 
 func loadEnv() {
-	if os.Getenv("ENVIRONMENT") != "Docker" {
+	if os.Getenv("ENVIRONMENT") != "docker" {
 		err := godotenv.Load("../../.env")
 		if err != nil {
 			log.Fatal("Error loading .env file", err)
@@ -68,4 +71,10 @@ func createKeyspace(session *gocql.Session) {
 	}
 
 	log.Println("Keyspace created")
+}
+
+func loadBasePath() {
+	if os.Getenv("BASE_PATH") != "" {
+		BasePath = os.Getenv("BASE_PATH") + "/"
+	}
 }

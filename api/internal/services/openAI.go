@@ -124,7 +124,11 @@ type Scenario struct {
 func createAssistant(c *models.Conversation) (string, error) {
 	// Generate Assistant Name
 	names := []string{}
-	namesFile, err := os.Open("names.json")
+
+	fmt.Println("Base path", config.BasePath)
+
+	filePath := fmt.Sprintf("%snames.json", config.BasePath)
+	namesFile, err := os.Open(filePath)
 
 	if err != nil {
 		fmt.Println("Error opening names file", err)
@@ -145,7 +149,8 @@ func createAssistant(c *models.Conversation) (string, error) {
 	// Generate Scenario
 	var scenarios []Scenario
 
-	scenariosFile, err := os.Open("scenarios.json")
+	filePath = fmt.Sprintf("%sscenarios.json", config.BasePath)
+	scenariosFile, err := os.Open(filePath)
 
 	if err != nil {
 		fmt.Println("Error opening scenarios file", err)

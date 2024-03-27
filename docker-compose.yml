@@ -10,7 +10,8 @@ services:
       - startup
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ENVIRONMENT=Docker
+      - ENVIRONMENT=docker
+      - CASSANDRA_CLUSTER_NAME=cassandra
 
   cassandra:
     image: cassandra:latest

@@ -12,6 +12,8 @@ RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container.
 COPY . .
+# Set the environment variable for the base path
+ENV BASE_PATH=/app/internal/server
 
 # Copy the wait-for-cassandra script
 COPY startup.sh /startup.sh
