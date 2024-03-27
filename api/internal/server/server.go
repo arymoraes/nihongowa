@@ -7,12 +7,14 @@ import (
 	"nihongowa/internal/handlers"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 	config.Bootstrap()
 
 	e := echo.New()
+	e.Use(middleware.Logger())
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
