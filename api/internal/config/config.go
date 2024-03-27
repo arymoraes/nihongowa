@@ -26,37 +26,37 @@ func loadEnv() {
 func createSchema(session *gocql.Session) {
 	createKeyspace(session)
 
-	// Create the custom type 'message'
-	createTypeCql := `CREATE TYPE IF NOT EXISTS nihongowa.message (
-        content TEXT,
-        translation TEXT,
-				romanji TEXT,
-				userMessageTranslated TEXT,
-				isAI BOOLEAN,
-        wordByWordTranslation LIST<TEXT>,
-        createdAt TIMESTAMP,
-        updatedAt TIMESTAMP
-    );`
-
-	// Execute the CQL to create the type
-	if err := session.Query(createTypeCql).Exec(); err != nil {
-		log.Fatalf("Failed to create custom type 'message': %v", err)
-	}
-
 	// Create the table 'conversations'
 	createTableCql := `CREATE TABLE IF NOT EXISTS nihongowa.conversations (
         id UUID PRIMARY KEY,
-        messages LIST<FROZEN<message>>,
-				AssistantName VARCHAR,
-				ThreadID VARCHAR,
-				AssistantID VARCHAR,
-				RunID VARCHAR,
-				Scenario TEXT
+				assistant_name VARCHAR,
+				thread_id VARCHAR,
+				assistant_id VARCHAR,
+				run_id VARCHAR,
+				scenario TEXT
     );`
 
 	// Execute the CQL to create the table
 	if err := session.Query(createTableCql).Exec(); err != nil {
 		log.Fatalf("Failed to create table 'conversations': %v", err)
+	}
+
+	createMessagesTableCql := `CREATE TABLE IF NOT EXISTS nihongowa.messages (
+				id UUID,
+				content TEXT,
+				translation TEXT,
+				romanji TEXT,
+				user_message_translated TEXT,
+				is_ai BOOLEAN,
+				word_by_word_translation LIST<TEXT>,
+				conversation_id UUID,
+				created_at TIMESTAMP,
+				updated_at TIMESTAMP,
+				PRIMARY KEY (conversation_id, id)
+		);`
+
+	if err := session.Query(createMessagesTableCql).Exec(); err != nil {
+		log.Fatalf("Failed to create table 'messages': %v", err)
 	}
 }
 

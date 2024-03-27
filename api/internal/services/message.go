@@ -16,14 +16,14 @@ func GetMessagesFromConversation(conversationID string) ([]models.Message, error
 		return nil, err
 	}
 
-	conversation := models.Conversation{ID: id}
+	messages, err := models.GetMessagesByConversationID(id.String())
 
-	if err := conversation.GetMessages(); err != nil {
-		log.Printf("Error getting messages from conversation: %v", err)
+	if err != nil {
+		log.Printf("Error getting messages by conversation ID: %v", err)
 		return nil, err
 	}
 
-	return conversation.Messages, nil
+	return messages, nil
 }
 
 func PostMessageToConversation(conversationID string, message models.Message) (models.Message, error) {
@@ -40,7 +40,9 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 		return models.Message{}, err
 	}
 
-	if err := conversation.AddMessage(message); err != nil {
+	message.ConversationID = conversationID
+
+	if err := models.NewMessage(&message); err != nil {
 		log.Printf("Error posting message to conversation: %v", err)
 		return models.Message{}, err
 	}
@@ -53,9 +55,10 @@ func PostMessageToConversation(conversationID string, message models.Message) (m
 		return models.Message{}, aiErr
 	}
 
+	aiReply.ConversationID = conversationID
 	aiReply.IsAI = true
 
-	conversation.AddMessage(aiReply)
+	models.NewMessage(&aiReply)
 
 	return aiReply, nil
 }
