@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -11,10 +12,20 @@ import (
 
 	"github.com/aws/aws-sigv4-auth-cassandra-gocql-driver-plugin/sigv4"
 	"github.com/gocql/gocql"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	// Check if the application is running in a Docker environment
+	if os.Getenv("ENVIRONMENT") != "Docker" {
+		// Attempt to load .env file if not running in Docker
+		err := godotenv.Load("../../.env")
+		if err != nil {
+			log.Fatal("Error loading .env file", err)
+		}
+	}
+
 	connectToCassandra(0)
 	config.OpenAIInit()
 
@@ -32,6 +43,25 @@ func main() {
 }
 
 func connectToCassandra(retryAttempt int) {
+	cluster := configureCassandraCluster()
+
+	if retryAttempt > 5 {
+		panic("Failed to connect to Cassandra")
+	}
+
+	session, err := cluster.CreateSession()
+
+	if err != nil {
+		fmt.Println("Failed to connect to Cassandra, retrying...", err)
+		time.Sleep(20 * time.Second)
+		connectToCassandra(retryAttempt + 1)
+		return
+	}
+
+	config.Init(session)
+}
+
+func configureCassandraCluster() *gocql.ClusterConfig {
 	var cluster *gocql.ClusterConfig
 
 	if os.Getenv("ENVIRONMENT") == "prod" {
@@ -44,15 +74,9 @@ func connectToCassandra(retryAttempt int) {
 
 		cluster.Authenticator = auth
 
-		// cluster.SslOpts = &gocql.SslOptions{
-		// 	CaPath: "/Users/user1/.cassandra/AmazonRootCA1.pem",
-		// }
 		cluster.Consistency = gocql.LocalQuorum
 		cluster.DisableInitialHostLookup = true
-	}
-
-	if os.Getenv("ENVIRONMENT") != "prod" {
-		// "localhost" if dev, "cassandra" if docker
+	} else {
 		cluster_name := os.Getenv("CASSANDRA_CLUSTER_NAME")
 		cluster = gocql.NewCluster(cluster_name)
 
@@ -60,18 +84,5 @@ func connectToCassandra(retryAttempt int) {
 			"nihongowa"
 	}
 
-	if retryAttempt > 5 {
-		panic("Failed to connect to Cassandra")
-	}
-
-	session, err := cluster.CreateSession()
-
-	if err != nil {
-		time.Sleep(20 * time.Second)
-		fmt.Println("Failed to connect to Cassandra, retrying...", err)
-		connectToCassandra(retryAttempt + 1)
-		return
-	}
-
-	config.Init(session)
+	return cluster
 }
