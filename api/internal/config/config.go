@@ -2,9 +2,26 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/gocql/gocql"
+	"github.com/joho/godotenv"
 )
+
+func Bootstrap() {
+	loadEnv()
+	connectToCassandra(0)
+	openAIInit()
+}
+
+func loadEnv() {
+	if os.Getenv("ENVIRONMENT") != "Docker" {
+		err := godotenv.Load("../../.env")
+		if err != nil {
+			log.Fatal("Error loading .env file", err)
+		}
+	}
+}
 
 func createSchema(session *gocql.Session) {
 	createKeyspace(session)

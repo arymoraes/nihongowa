@@ -8,7 +8,7 @@ import (
 
 var OpenAIClient *openai.Client
 
-func OpenAIInit() {
+func openAIInit() {
 	// Initialize the OpenAI client with the API key from environment variables
 	OpenAIClient = openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 }
