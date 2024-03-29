@@ -1,5 +1,6 @@
 package screen.home
 
+import AppConfig
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -126,7 +127,7 @@ suspend fun fetchData(): List<Conversation> {
     }
 
     try {
-        val response: HttpResponse = client.get("http://192.168.1.71:1323/conversations")
+        val response: HttpResponse = client.get("${AppConfig.BASE_URL}/conversations")
 
         return Json.decodeFromString<List<Conversation>>(response.bodyAsText())
 
@@ -150,7 +151,7 @@ suspend fun createConversation(): PostConversationResponse? {
     }
 
     return try {
-        val response: HttpResponse = client.post("http://192.168.1.71:1323/conversations")
+        val response: HttpResponse = client.post("${AppConfig.BASE_URL}/conversations")
         if (response.status == HttpStatusCode.OK) {
             Json.decodeFromString<PostConversationResponse>(response.bodyAsText())
         } else {

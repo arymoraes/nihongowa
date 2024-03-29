@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"nihongowa/internal/utils"
+
 	"github.com/gocql/gocql"
 	"github.com/labstack/gommon/log"
 )
@@ -44,7 +46,7 @@ func configureCassandraCluster() *gocql.ClusterConfig {
 		return configureKeyspaces()
 	} else {
 		log.Info("Configuring local Cassandra")
-		cluster_name := os.Getenv("CASSANDRA_CLUSTER_NAME")
+		cluster_name := utils.GetEnv("CASSANDRA_CLUSTER_NAME", "localhost")
 		cluster := gocql.NewCluster(cluster_name)
 
 		cluster.Keyspace =

@@ -1,5 +1,6 @@
 package screen.conversation
 
+import AppConfig
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -93,7 +94,7 @@ suspend fun fetchData(conversationId: String): List<Message> {
     }
 
     try {
-        val response: HttpResponse = client.get("http://192.168.1.71:1323/messages/$conversationId")
+        val response: HttpResponse = client.get("${AppConfig.BASE_URL}/messages/$conversationId")
 
         return Json.decodeFromString<List<Message>>(response.bodyAsText())
 

@@ -1,5 +1,6 @@
 package screen.conversation
 
+import AppConfig
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -65,7 +66,7 @@ suspend fun sendMessage(message: String, conversationId: String): Boolean {
 
     return try {
         val response: HttpResponse = client.submitForm(
-            url = "http://192.168.1.71:1323/messages/$conversationId",
+            url = "${AppConfig.BASE_URL}/messages/$conversationId",
             formParameters = Parameters.build {
                 append("message", message)
             }
