@@ -1,0 +1,36 @@
+{
+  "vpc-provider:account=058264403878:filter.tag:Name=FoundatationStack/BackendVpc:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0e0b7083aac3ee7df",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "ownerAccountId": "058264403878",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-04467432c29789ee7",
+            "cidr": "10.0.0.0/24",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0e881365d37b525aa"
+          },
+          {
+            "subnetId": "subnet-0847ef2ff1f7fbb58",
+            "cidr": "10.0.1.0/24",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-03e61c52132b55e9e"
+          }
+        ]
+      }
+    ]
+  },
+  "availability-zones:account=058264403878:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ]
+}

@@ -1,11 +1,11 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/gocql/gocql"
 	"github.com/joho/godotenv"
+	"github.com/labstack/gommon/log"
 )
 
 var BasePath string = ""
@@ -18,6 +18,7 @@ func Bootstrap() {
 }
 
 func loadEnv() {
+	log.Info("Loading environment variables")
 	if os.Getenv("ENVIRONMENT") == "dev" {
 		err := godotenv.Load("../../.env")
 		if err != nil {
@@ -27,7 +28,10 @@ func loadEnv() {
 }
 
 func createSchema(session *gocql.Session) {
+	log.Info("Creating schema")
 	createKeyspace(session)
+
+	log.Info("Creating tables")
 
 	// Create the table 'conversations'
 	createTableCql := `CREATE TABLE IF NOT EXISTS nihongowa.conversations (
@@ -41,7 +45,7 @@ func createSchema(session *gocql.Session) {
 
 	// Execute the CQL to create the table
 	if err := session.Query(createTableCql).Exec(); err != nil {
-		log.Fatalf("Failed to create table 'conversations': %v", err)
+		log.Error("Failed to create table 'conversations': %v", err)
 	}
 
 	createMessagesTableCql := `CREATE TABLE IF NOT EXISTS nihongowa.messages (
@@ -59,7 +63,7 @@ func createSchema(session *gocql.Session) {
 		);`
 
 	if err := session.Query(createMessagesTableCql).Exec(); err != nil {
-		log.Fatalf("Failed to create table 'messages': %v", err)
+		log.Error("Failed to create table 'messages': %v", err)
 	}
 }
 
@@ -70,7 +74,7 @@ func createKeyspace(session *gocql.Session) {
 		log.Fatalf("Failed to create keyspace: %v", err)
 	}
 
-	log.Println("Keyspace created")
+	log.Info("Keyspace created")
 }
 
 func loadBasePath() {

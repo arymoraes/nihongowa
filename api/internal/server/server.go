@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 
+	"github.com/charmbracelet/log"
+
 	"nihongowa/internal/config"
 	"nihongowa/internal/handlers"
 
@@ -15,6 +17,9 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Logger())
+
+	log.Info("Starting server")
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})

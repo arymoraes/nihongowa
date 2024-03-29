@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/labstack/gommon/log"
 )
 
 var (
@@ -39,8 +40,10 @@ func connectToCassandra(retryAttempt int) {
 
 func configureCassandraCluster() *gocql.ClusterConfig {
 	if os.Getenv("ENVIRONMENT") == "prod" {
+		log.Info("Configuring AWS Keyspaces")
 		return configureKeyspaces()
 	} else {
+		log.Info("Configuring local Cassandra")
 		cluster_name := os.Getenv("CASSANDRA_CLUSTER_NAME")
 		cluster := gocql.NewCluster(cluster_name)
 
