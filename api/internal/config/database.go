@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/aws/aws-sigv4-auth-cassandra-gocql-driver-plugin/sigv4"
 	"github.com/gocql/gocql"
 )
 
@@ -14,7 +13,6 @@ var (
 	Session  *gocql.Session = nil
 )
 
-// Init initializes the database connection
 func initSession(session *gocql.Session) {
 	Session = session
 	createSchema(session)
@@ -40,27 +38,15 @@ func connectToCassandra(retryAttempt int) {
 }
 
 func configureCassandraCluster() *gocql.ClusterConfig {
-	var cluster *gocql.ClusterConfig
-
 	if os.Getenv("ENVIRONMENT") == "prod" {
-		cluster := gocql.NewCluster("cassandra.us-east-1.amazonaws.com:9142")
-		var auth sigv4.AwsAuthenticator = sigv4.NewAwsAuthenticator()
-
-		auth.Region = os.Getenv("AWS_REGION")
-		auth.AccessKeyId = os.Getenv("AWS_ACCESS_KEY_ID")
-		auth.SecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
-
-		cluster.Authenticator = auth
-
-		cluster.Consistency = gocql.LocalQuorum
-		cluster.DisableInitialHostLookup = true
+		return configureKeyspaces()
 	} else {
 		cluster_name := os.Getenv("CASSANDRA_CLUSTER_NAME")
-		cluster = gocql.NewCluster(cluster_name)
+		cluster := gocql.NewCluster(cluster_name)
 
 		cluster.Keyspace =
 			"nihongowa"
-	}
 
-	return cluster
+		return cluster
+	}
 }

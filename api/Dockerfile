@@ -15,8 +15,6 @@ COPY . .
 # Set the environment variable for the base path
 ENV BASE_PATH=/app/internal/server
 
-# Copy the wait-for-cassandra script
-COPY startup.sh /startup.sh
 
 # Build the Go app
 RUN go build -o server ./internal/server
@@ -25,4 +23,4 @@ RUN go build -o server ./internal/server
 EXPOSE 1323
 
 # Command to run the executable.
-CMD ["/startup.sh", "cassandra", "9042", "./server"]
+CMD ["./server"]

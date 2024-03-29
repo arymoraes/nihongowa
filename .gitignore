@@ -1,3 +1,3 @@
 .env
 server.exe
-.pem
+AmazonRootCA1.pem
