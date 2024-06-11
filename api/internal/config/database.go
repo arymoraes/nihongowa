@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"nihongowa/internal/utils"
@@ -41,17 +40,17 @@ func connectToCassandra(retryAttempt int) {
 }
 
 func configureCassandraCluster() *gocql.ClusterConfig {
-	if os.Getenv("ENVIRONMENT") == "prod" {
-		log.Info("Configuring AWS Keyspaces")
-		return configureKeyspaces()
-	} else {
-		log.Info("Configuring local Cassandra")
-		cluster_name := utils.GetEnv("CASSANDRA_CLUSTER_NAME", "localhost")
-		cluster := gocql.NewCluster(cluster_name)
+	// if os.Getenv("ENVIRONMENT") == "prod" {
+	// 	log.Info("Configuring AWS Keyspaces")
+	// 	return configureKeyspaces()
+	// } else {
+	log.Info("Configuring local Cassandra")
+	cluster_name := utils.GetEnv("CASSANDRA_CLUSTER_NAME", "localhost")
+	cluster := gocql.NewCluster(cluster_name)
 
-		cluster.Keyspace =
-			"nihongowa"
+	cluster.Keyspace =
+		"nihongowa"
 
-		return cluster
-	}
+	return cluster
+	// }
 }
