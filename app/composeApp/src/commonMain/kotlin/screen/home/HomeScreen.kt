@@ -76,6 +76,8 @@ class HomeScreen: Screen {
                 Text("Create Conversation")
             }
 
+            Text("API: ${AppConfig.BASE_URL}")
+
             // Display conversations in a list
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(conversations.value) { conversation ->

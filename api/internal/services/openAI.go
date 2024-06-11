@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"nihongowa/internal/config"
 	"nihongowa/internal/models"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -17,7 +19,8 @@ import (
 var instructions = "You will hold a conversation in Japanese. You will receive a message from the user (will be the previous message on the thread), and you will answer in Japanese, like a normal conversation. You will try to be brief in your responses (1-2 sentences)" +
 	"You will use hiragana and katakana, and avoid using kanjis\n" +
 	"Your response will be in a JSON format, and you will not send anything other than the JSON with the response, so I can parse the JSON on my server from your response." +
-	"The JSON will contain: `content`, `romanji` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese." +
+	"The JSON will contain: `content`, `romanji` and `translation`. `content` will be the message in Japanese, and `translation` will be the translation of the message in English. You will also include `romanji` which will be the romanji of the message in Japanese. For `romanji`, every time you have to use a word that would be translate to katana, " +
+	"Add * before and after, like for example: watashi wa *petto* desu" +
 	"This is the JSON format:\n" +
 	"{\n" +
 	"    \"content\": \"こんにちは\",\n" +
@@ -65,6 +68,7 @@ func CreateConversationScenario() (models.Conversation, error) {
 		return models.Conversation{}, err
 	}
 
+	message.Content = RomajiToJapanese(message.Romanji)
 	conversation.Messages = []models.Message{message}
 	conversation.RunID = run.ID
 
@@ -125,9 +129,19 @@ func createAssistant(c *models.Conversation) (string, error) {
 	// Generate Assistant Name
 	names := []string{}
 
-	fmt.Println("Base path", config.BasePath)
+	if config.BasePath == "" {
+		config.BasePath = "./internal/server/"
+	}
 
-	filePath := fmt.Sprintf("%snames.json", config.BasePath)
+	// Construct the file path
+	filePath := filepath.Join(config.BasePath, "names.json")
+
+	// Check if the file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		log.Printf("File not found at path: %s. Using default 'names.json'.", filePath)
+		filePath = "names.json"
+	}
+
 	namesFile, err := os.Open(filePath)
 
 	if err != nil {

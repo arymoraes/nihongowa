@@ -19,8 +19,8 @@ func Bootstrap() {
 
 func loadEnv() {
 	log.Info("Loading environment variables")
-	if os.Getenv("ENVIRONMENT") == "dev" {
-		err := godotenv.Load("../../.env")
+	if os.Getenv("ENVIRONMENT") != "prod" {
+		err := godotenv.Load("../.env")
 		if err != nil {
 			log.Fatal("Error loading .env file", err)
 		}
